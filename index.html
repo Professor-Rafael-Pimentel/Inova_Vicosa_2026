@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESEDRAT - Você viu o problema? Cadê a solução? | Inova Viçosa 2026</title>
     
-    <!-- CSS e JS do Leaflet movidos para o HEAD para garantir carregamento prévio -->
+    <!-- CSS e JS do Leaflet para carregamento prévio -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -177,8 +177,8 @@
         }
 
         .brand-icon {
-            width: 44px;
-            height: 44px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, var(--primary), #0284c7);
             border-radius: 12px;
             display: flex;
@@ -301,6 +301,7 @@
             align-items: center;
             gap: 8px;
             box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
+            text-decoration: none;
         }
 
         .btn-action:hover {
@@ -321,7 +322,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
-            margin-top: 24px;
+            margin-top: 20px;
         }
 
         .card {
@@ -339,6 +340,13 @@
             box-shadow: var(--shadow-md);
         }
 
+        .badge-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -347,7 +355,6 @@
             font-weight: 700;
             text-transform: uppercase;
             width: fit-content;
-            margin-bottom: 12px;
         }
 
         .badge-danger { background: #fee2e2; color: var(--danger); }
@@ -365,6 +372,7 @@
             color: var(--text-muted);
             margin-bottom: 16px;
             line-height: 1.5;
+            white-space: pre-line;
         }
 
         .card-footer {
@@ -375,6 +383,8 @@
             border-top: 1px solid var(--border);
             font-size: 0.85rem;
             color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         /* Formulários */
@@ -384,7 +394,7 @@
             border-radius: var(--radius-lg);
             padding: 28px;
             box-shadow: var(--shadow-sm);
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -450,8 +460,9 @@
         /* Botões de Votação (Chat) */
         .vote-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn-vote {
@@ -464,13 +475,51 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-main);
+            transition: all 0.2s ease;
         }
 
         .btn-vote:hover {
             border-color: var(--primary);
             color: var(--primary);
+        }
+
+        .btn-vote.active-up {
+            background-color: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .btn-vote.active-down {
+            background-color: #fee2e2;
+            border-color: var(--danger);
+            color: var(--danger);
+            font-weight: 800;
+        }
+
+        .btn-vote.active-report {
+            background-color: #fef3c7;
+            border-color: var(--warning);
+            color: var(--warning);
+            font-weight: 800;
+        }
+
+        body.high-contrast .btn-vote.active-up {
+            background: #0c4a6e;
+            color: #38bdf8;
+            border-color: #38bdf8;
+        }
+        body.high-contrast .btn-vote.active-down {
+            background: #450a0a;
+            color: #f87171;
+            border-color: #f87171;
+        }
+        body.high-contrast .btn-vote.active-report {
+            background: #451a03;
+            color: #fbbf24;
+            border-color: #fbbf24;
         }
 
         /* Contatos de Emergência */
@@ -527,6 +576,13 @@
             display: block;
         }
 
+        /* Seção em Destaque na aba Relatar */
+        .section-divider {
+            margin: 36px 0 20px 0;
+            padding-top: 24px;
+            border-top: 2px dashed var(--border);
+        }
+
         /* Rodapé */
         footer {
             background: var(--secondary);
@@ -539,11 +595,6 @@
         }
 
         footer strong { color: #fff; }
-
-        .logo-img{
-            height:clamp(40px,8vw,60px);
-            max-width:100px;
-        }
     </style>
 </head>
 <body>
@@ -563,7 +614,7 @@
     <header>
         <div class="brand">
             <div class="brand-icon">
-                <img src="logos_ESEDRAT.png" class="logo-img" alt="ESEDRAT" onerror="this.style.display='none'">
+                <img src="logos_ESEDRAT.png" class="brand-icon" alt="ESEDRAT" onerror="this.style.display='none'">
             </div>
             <div class="brand-text">
                 <h1>Você viu o problema? Cadê a solução?</h1>
@@ -587,13 +638,13 @@
         <!-- ABA 1: MAPA E RISCOS -->
         <section id="tab-mapa" class="tab-content active">
             <div class="search-box">
-                <input type="text" id="map-search" class="search-input" placeholder="Pesquisar bairro (ex: Centro, Ramos, Silvestre) ou CEP...">
+                <input type="text" id="map-search" class="search-input" placeholder="Pesquisar bairro (ex: Centro, Ramos, Silvestre) ou CEP..." onkeyup="if(event.key==='Enter') searchLocation()">
                 <button class="btn-action" onclick="searchLocation()">🔍 Consultar Bairro</button>
             </div>
 
             <div id="map"></div>
 
-            <h3 style="margin-top: 28px; font-weight: 800;">Ocorrências Recentes Identificadas</h3>
+            <h3 style="margin-top: 28px; font-weight: 800;">Ocorrências Recentes e Mapeamento de Riscos</h3>
             <div class="grid-cards" id="risks-list">
                 <!-- Cards alimentados por JS -->
             </div>
@@ -660,6 +711,18 @@
                         📤 Registrar e Enviar Relato
                     </button>
                 </form>
+
+                <!-- NOVA SEÇÃO: Visão Geral de Relatos e Ocorrências Existentes -->
+                <div class="section-divider">
+                    <h3 style="font-weight: 800; font-size: 1.2rem;">📋 Painel Geral de Ocorrências e Relatos Existentes</h3>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; margin-bottom: 16px;">
+                        Consulte abaixo os relatos e problemas sugeridos por outros cidadãos de Viçosa. Caso sua demanda já conste na lista, o cadastro do mesmo problema no mesmo bairro atua automaticamente como um <strong>Reforço de Urgência</strong>.
+                    </p>
+
+                    <div id="reported-section-list" class="grid-cards">
+                        <!-- Alimentado via JS com visualização completa dos relatos -->
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -683,7 +746,7 @@
                     </form>
                 </div>
 
-                <h3 style="margin-bottom: 16px;">Tópicos Ativos em Viçosa</h3>
+                <h3 style="margin-bottom: 16px;">Tópicos e Discussões Ativas em Viçosa</h3>
                 <div id="chat-feed" style="display: flex; flex-direction: column; gap: 16px;">
                     <!-- Posts via JS -->
                 </div>
@@ -694,15 +757,15 @@
         <section id="tab-faq" class="tab-content">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px;">
                 <div class="card" style="text-align: center;">
-                    <span style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">148</span>
+                    <span id="stat-total" style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">148</span>
                     <span style="color: var(--text-muted); font-size: 0.9rem;">Relatos Registrados</span>
                 </div>
                 <div class="card" style="text-align: center;">
-                    <span style="font-size: 2.2rem; font-weight: 800; color: var(--success);">82%</span>
+                    <span id="stat-resolved" style="font-size: 2.2rem; font-weight: 800; color: var(--success);">82%</span>
                     <span style="color: var(--text-muted); font-size: 0.9rem;">Resoluções/Encaminhados</span>
                 </div>
                 <div class="card" style="text-align: center;">
-                    <span style="font-size: 2.2rem; font-weight: 800; color: var(--warning);">12</span>
+                    <span id="stat-bairros" style="font-size: 2.2rem; font-weight: 800; color: var(--warning);">12</span>
                     <span style="color: var(--text-muted); font-size: 0.9rem;">Bairros Monitorados</span>
                 </div>
             </div>
@@ -720,8 +783,8 @@
             </div>
 
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Como funciona a votação de utilidade no Chat? <span>▼</span></div>
-                <div class="faq-answer">Os moradores podem votar em "Útil" nas postagens. Os tópicos mais bem votados ganham destaque e são migrados automaticamente para a aba de soluções comunitárias e FAQ.</div>
+                <div class="faq-question">Como funciona a votação no Fórum e priorização por Bairro? <span>▼</span></div>
+                <div class="faq-answer">Cada usuário pode votar uma única vez por comentário em "Útil", "Não Útil" ou denunciar diretrizes. Além disso, quando múltiplos moradores registram problemas em um mesmo bairro, o sistema eleva automaticamente a ocorrência para Prioridade Alta.</div>
             </div>
         </section>
 
@@ -773,8 +836,8 @@
 
     <!-- Rodapé -->
     <footer>
-        <p><strong>Projeto ESEDRAT</strong> — Concurso Inova Viçosa 2026</p>
-        <p style="margin-top: 6px;">Desenvolvido por estudantes de escolas públicas da região de Viçosa-MG.</p>
+        <p><strong>PROJETO ESEDRAT</strong> — Inova Viçosa 2026</p>
+        <p style="margin-top: 6px;">Desenvolvido por estudantes da ESEDRAT - Turma do EMTI 3° INT 01 - Com a Supervisão de professores e gestão escolar - Viçosa-MG.</p>
     </footer>
 
     <!-- Widget Oficial do VLibras -->
@@ -786,40 +849,82 @@
     </div>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
+        if (typeof window.VLibras !== 'undefined') {
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        }
     </script>
 
-    <!-- Lógica JavaScript da Aplicação -->
+    <!-- Lógica JavaScript Corrigida e Aprimorada da Aplicação -->
     <script>
-        const vicosaRisks = [
-            { id: 1, title: "Buraco Profundo na Via", category: "Buraco / Calçamento", badge: "badge-danger", lat: -20.7540, lng: -42.8810, bairro: "Centro", desc: "Buraco próximo ao ponto de ônibus central provocando risco aos motoristas." },
-            { id: 2, title: "Acúmulo de Água Parada", category: "Foco de Dengue", badge: "badge-warning", lat: -20.7480, lng: -42.8750, bairro: "Clélia Bernardes", desc: "Terreno abandonado com recipientes acumulando água em período chuvoso." },
-            { id: 3, title: "Risco de Deslizamento em Encosta", category: "Risco de Deslizamento", badge: "badge-danger", lat: -20.7610, lng: -42.8890, bairro: "Ramos", desc: "Movimentação de terra observada após últimas chuvas intensas." },
-            { id: 4, title: "Calçada Danificada / Acessibilidade", category: "Iluminação / Mobilidade", badge: "badge-info", lat: -20.7580, lng: -42.8720, bairro: "Silvestre", desc: "Piso tátil interrompido e calçada quebrada dificultando passagem de cadeirantes." }
+        // Dados Base Iniciais
+        const defaultRisks = [
+            { id: 1, title: "Buraco Profundo na Via", category: "Buraco / Calçamento", bairro: "Centro", cep: "36570-000", desc: "Buraco próximo ao ponto de ônibus central provocando risco aos motoristas e pedestres.", lat: -20.7540, lng: -42.8810, reinforcements: 3, date: "28/09/2026" },
+            { id: 2, title: "Acúmulo de Água Parada", category: "Foco de Dengue", bairro: "Clélia Bernardes", cep: "36570-100", desc: "Terreno abandonado com recipientes acumulando água em período chuvoso.", lat: -20.7480, lng: -42.8750, reinforcements: 5, date: "27/09/2026" },
+            { id: 3, title: "Risco de Deslizamento em Encosta", category: "Risco de Deslizamento", bairro: "Ramos", cep: "36570-200", desc: "Movimentação de terra e erosão observadas após últimas chuvas intensas.", lat: -20.7610, lng: -42.8890, reinforcements: 8, date: "26/09/2026" },
+            { id: 4, title: "Calçada Danificada / Acessibilidade", category: "Iluminação / Mobilidade", bairro: "Silvestre", cep: "36570-300", desc: "Piso tátil interrompido e calçada quebrada dificultando passagem de cadeirantes.", lat: -20.7580, lng: -42.8720, reinforcements: 1, date: "25/09/2026" }
         ];
 
-        const chatPosts = [
-            { id: 1, author: "Maria S. (Bairro Ramos)", title: "Mutirão comunitário contra a Dengue no final de semana?", desc: "O que acham de organizarmos uma limpeza nos lotes vagos do bairro no sábado?", votes: 24 },
-            { id: 2, author: "João P. (Centro)", title: "Sinalização apagada perto da escola", desc: "A faixa de pedestres perto da escola estadual está apagada. Precisamos reforçar o pedido no app.", votes: 18 }
+        const defaultPosts = [
+            { id: 101, author: "Maria S. (Bairro Ramos)", title: "Mutirão comunitário contra a Dengue no final de semana?", desc: "O que acham de organizarmos uma limpeza nos lotes vagos do bairro no sábado?", votesUp: 24, votesDown: 2, reports: 0 },
+            { id: 102, author: "João P. (Centro)", title: "Sinalização apagada perto da escola", desc: "A faixa de pedestres perto da escola estadual está apagada. Precisamos reforçar o pedido no app.", votesUp: 18, votesDown: 0, reports: 0 }
         ];
+
+        // Carregamento de Persistência via LocalStorage
+        let vicosaRisks = JSON.parse(localStorage.getItem('vicosa_risks_data')) || defaultRisks;
+        let chatPosts = JSON.parse(localStorage.getItem('vicosa_posts_data')) || defaultPosts;
+        let userForumVotes = JSON.parse(localStorage.getItem('vicosa_forum_user_votes')) || {}; // Armazena voto único do usuário por post
 
         let map, markersGroup;
 
         document.addEventListener("DOMContentLoaded", () => {
             initMap();
-            renderRiskCards(vicosaRisks);
-            renderChatFeed();
+            renderAllViews();
         });
+
+        function saveDataToStorage() {
+            localStorage.setItem('vicosa_risks_data', JSON.stringify(vicosaRisks));
+            localStorage.setItem('vicosa_posts_data', JSON.stringify(chatPosts));
+            localStorage.setItem('vicosa_forum_user_votes', JSON.stringify(userForumVotes));
+        }
+
+        // Cálculo Dinâmico de Prioridade e Nível de Urgência por Bairro
+        function getBairroPriorityInfo(bairroName) {
+            const normBairro = bairroName.trim().toLowerCase();
+            const sameBairroRisks = vicosaRisks.filter(r => r.bairro.trim().toLowerCase() === normBairro);
+            
+            // Total de ocorrências + reforços acumulados no bairro
+            const totalAlertsInBairro = sameBairroRisks.reduce((acc, curr) => acc + (curr.reinforcements || 1), 0);
+
+            if (totalAlertsInBairro >= 5) {
+                return {
+                    badgeClass: "badge-danger",
+                    label: "🔴 PRIORIDADE ALTA (Alerta Autoridades)",
+                    alertsCount: totalAlertsInBairro
+                };
+            } else if (totalAlertsInBairro >= 3) {
+                return {
+                    badgeClass: "badge-warning",
+                    label: "🟠 Prioridade Média",
+                    alertsCount: totalAlertsInBairro
+                };
+            } else {
+                return {
+                    badgeClass: "badge-info",
+                    label: "🟢 Prioridade Normal",
+                    alertsCount: totalAlertsInBairro
+                };
+            }
+        }
 
         function initMap() {
             const mapContainer = document.getElementById('map');
-            
-            // Verificação de segurança caso o Leaflet não tenha carregado por falta de internet
+            if (!mapContainer) return;
+
             if (typeof L === 'undefined') {
                 mapContainer.innerHTML = `
                     <div style="display:flex; height:100%; align-items:center; justify-content:center; flex-direction:column; background:var(--surface); color:var(--text-main); text-align:center; padding:20px; border-radius: var(--radius-lg);">
                         <p style="font-weight:bold; font-size:1.1rem; margin-bottom:8px;">⚠️ Não foi possível carregar o Mapa Interativo</p>
-                        <p style="font-size:0.9rem; color:var(--text-muted);">Certifique-se de estar conectado à internet para baixar as bibliotecas do mapa (OpenStreetMap / Leaflet).</p>
+                        <p style="font-size:0.9rem; color:var(--text-muted);">Certifique-se de estar conectado à internet para carregar os componentes de geolocalização.</p>
                     </div>`;
                 return;
             }
@@ -828,19 +933,6 @@
                 // Coordenadas Centrais de Viçosa - MG (-20.7539, -42.8807)
                 map = L.map('map').setView([-20.7539, -42.8807], 14);
 
-                //L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                //    maxZoom: 19,
-                //    attribution: '© OpenStreetMap contributors'
-                //}).addTo(map);
-
-                // Substitua o L.tileLayer antigo por este do CARTO Voyager:
-                //L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                //    maxZoom: 19,
-                //    subdomains: 'abcd',
-                //    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                //}).addTo(map);
-
-                //Visão do Google Maps Padrão (Vetor de Ruas)
                 L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
                     maxZoom: 20,
                     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
@@ -848,58 +940,122 @@
                 }).addTo(map);
 
                 markersGroup = L.layerGroup().addTo(map);
+                updateMapMarkers(vicosaRisks);
 
-                vicosaRisks.forEach(risk => {
-                    const marker = L.marker([risk.lat, risk.lng]);
-                    marker.bindPopup(`
-                        <strong>${risk.title}</strong><br>
-                        <small>📍 ${risk.bairro}</small><br>
-                        <p style="font-size: 0.8rem; margin-top: 4px;">${risk.desc}</p>
-                    `);
-                    markersGroup.addLayer(marker);
-                });
-
-                // Recalcular tamanho do mapa após o carregamento da janela
                 setTimeout(() => {
                     if (map) map.invalidateSize();
                 }, 300);
 
             } catch (err) {
-                console.error("Erro ao inicializar o mapa:", err);
+                console.error("Erro ao inicializar mapa Leaflet:", err);
             }
+        }
+
+        function updateMapMarkers(list) {
+            if (!map || !markersGroup) return;
+            markersGroup.clearLayers();
+
+            list.forEach(risk => {
+                const priority = getBairroPriorityInfo(risk.bairro);
+                const marker = L.marker([risk.lat, risk.lng]);
+                marker.bindPopup(`
+                    <strong>${risk.title}</strong><br>
+                    <small>📍 Bairro: ${risk.bairro}</small><br>
+                    <small><strong>Nível:</strong> ${priority.label}</small><br>
+                    <p style="font-size: 0.8rem; margin-top: 4px;">${risk.desc}</p>
+                `);
+                markersGroup.addLayer(marker);
+            });
+        }
+
+        function renderAllViews() {
+            renderRiskCards(vicosaRisks);
+            renderReportedSectionList(vicosaRisks);
+            renderChatFeed();
+            updateStats();
+            if (map && markersGroup) updateMapMarkers(vicosaRisks);
         }
 
         function renderRiskCards(list) {
             const container = document.getElementById('risks-list');
-            container.innerHTML = list.map(risk => `
+            if (!container) return;
+
+            if (list.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-muted); text-align: center; padding: 20px;">Nenhum problema localizado para a pesquisa informada.</p>`;
+                return;
+            }
+
+            container.innerHTML = list.map(risk => {
+                const priority = getBairroPriorityInfo(risk.bairro);
+                return `
                 <div class="card">
                     <div>
-                        <span class="badge ${risk.badge}">${risk.category}</span>
+                        <div class="badge-container">
+                            <span class="badge badge-info">${risk.category}</span>
+                            <span class="badge ${priority.badgeClass}">${priority.label}</span>
+                        </div>
                         <h4 class="card-title">${risk.title}</h4>
                         <p class="card-desc">${risk.desc}</p>
                     </div>
                     <div class="card-footer">
                         <span>📍 Bairro: <strong>${risk.bairro}</strong></span>
-                        <span style="color: var(--primary); font-weight: 700;">Status: Ativo</span>
+                        <span style="color: var(--primary); font-weight: 700;">📢 ${risk.reinforcements || 1} Alerta(s)</span>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
+        }
+
+        // Renderiza a Nova Seção de Relatos Registrados na Aba "Relate um Problema"
+        function renderReportedSectionList(list) {
+            const container = document.getElementById('reported-section-list');
+            if (!container) return;
+
+            if (list.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-muted); text-align: center;">Nenhuma ocorrência registrada até o momento.</p>`;
+                return;
+            }
+
+            container.innerHTML = list.map(risk => {
+                const priority = getBairroPriorityInfo(risk.bairro);
+                return `
+                <div class="card" style="border-left: 4px solid var(--primary);">
+                    <div>
+                        <div class="badge-container">
+                            <span class="badge badge-info">${risk.category}</span>
+                            <span class="badge ${priority.badgeClass}">${priority.label}</span>
+                        </div>
+                        <h4 class="card-title">${risk.title}</h4>
+                        <p class="card-desc">${risk.desc}</p>
+                    </div>
+                    <div class="card-footer">
+                        <span>📍 <strong>${risk.bairro}</strong> ${risk.cep ? `(CEP: ${risk.cep})` : ''}</span>
+                        <span>📅 ${risk.date || 'Recente'}</span>
+                    </div>
+                </div>
+            `}).join('');
         }
 
         function searchLocation() {
             const query = document.getElementById('map-search').value.toLowerCase().trim();
             if (!query) {
                 renderRiskCards(vicosaRisks);
+                if (map && markersGroup) updateMapMarkers(vicosaRisks);
                 return;
             }
 
-            const filtered = vicosaRisks.filter(r => r.bairro.toLowerCase().includes(query) || r.category.toLowerCase().includes(query));
+            const filtered = vicosaRisks.filter(r => 
+                r.bairro.toLowerCase().includes(query) || 
+                r.category.toLowerCase().includes(query) ||
+                (r.cep && r.cep.includes(query))
+            );
+
             renderRiskCards(filtered);
+            if (map && markersGroup) updateMapMarkers(filtered);
 
             if (filtered.length > 0 && map) {
                 map.setView([filtered[0].lat, filtered[0].lng], 15);
             } else {
-                alert("Nenhum problema cadastrado localizado para essa busca.");
+                alert("Nenhum registro encontrado para o parâmetro informado.");
             }
         }
 
@@ -907,90 +1063,177 @@
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            btn.classList.add('active');
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
+            if (btn) btn.classList.add('active');
 
             if (tabId === 'mapa' && map) {
                 setTimeout(() => map.invalidateSize(), 200);
             }
         }
 
+        // Submissão de Ocorrências com Verificação de Duplicatas
         function submitReport(e) {
             e.preventDefault();
-            const name = document.getElementById('rep-name').value;
+            const name = document.getElementById('rep-name').value.trim();
             const category = document.getElementById('rep-category').value;
-            const bairro = document.getElementById('rep-bairro').value;
-            const desc = document.getElementById('rep-desc').value;
+            const bairro = document.getElementById('rep-bairro').value.trim();
+            const cep = document.getElementById('rep-cep').value.trim();
+            const desc = document.getElementById('rep-desc').value.trim();
 
-            const newRisk = {
-                id: Date.now(),
-                title: `${category} em ${bairro}`,
-                category: category,
-                badge: 'badge-danger',
-                lat: -20.7539 + (Math.random() - 0.5) * 0.02,
-                lng: -42.8807 + (Math.random() - 0.5) * 0.02,
-                bairro: bairro,
-                desc: desc
-            };
+            // Verificação de Ocorrência Duplicada no mesmo Bairro + Categoria
+            const existingIndex = vicosaRisks.findIndex(r => 
+                r.bairro.toLowerCase() === bairro.toLowerCase() && 
+                r.category.toLowerCase() === category.toLowerCase()
+            );
 
-            vicosaRisks.unshift(newRisk);
-            renderRiskCards(vicosaRisks);
-
-            if (map) {
-                const marker = L.marker([newRisk.lat, newRisk.lng]).addTo(markersGroup);
-                marker.bindPopup(`<strong>${newRisk.title}</strong><br><small>📍 ${newRisk.bairro}</small>`);
+            if (existingIndex !== -1) {
+                // Incrementa a urgência/reforço da ocorrência existente
+                vicosaRisks[existingIndex].reinforcements = (vicosaRisks[existingIndex].reinforcements || 1) + 1;
+                vicosaRisks[existingIndex].desc += `\n\n[Reforço de ${name} em ${new Date().toLocaleDateString('pt-BR')}]: ${desc}`;
+                
+                alert(`⚠️ Atenção: Já existe uma ocorrência de "${category}" cadastrada no bairro "${bairro}".\n\nSeu registro foi adicionado como REFORÇO DE URGÊNCIA (+1 para a prioridade das autoridades). Total de alertas neste local: ${vicosaRisks[existingIndex].reinforcements}.`);
+            } else {
+                // Cria uma nova ocorrência
+                const newRisk = {
+                    id: Date.now(),
+                    title: `${category} em ${bairro}`,
+                    category: category,
+                    bairro: bairro,
+                    cep: cep,
+                    desc: desc,
+                    lat: -20.7539 + (Math.random() - 0.5) * 0.02,
+                    lng: -42.8807 + (Math.random() - 0.5) * 0.02,
+                    reinforcements: 1,
+                    date: new Date().toLocaleDateString('pt-BR')
+                };
+                vicosaRisks.unshift(newRisk);
+                alert(`Obrigado, ${name}! Seu relato sobre "${category}" em ${bairro} foi cadastrado com sucesso.`);
             }
 
-            alert(`Obrigado, ${name}! Seu relato sobre "${category}" em ${bairro} foi cadastrado com sucesso.`);
+            saveDataToStorage();
+            renderAllViews();
             document.getElementById('form-report').reset();
-            switchTab('mapa', document.querySelectorAll('.nav-btn')[0]);
+
+            // Mantém o usuário na aba de relatos e rola suavemente até o painel geral
+            const sectionList = document.getElementById('reported-section-list');
+            if (sectionList) sectionList.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Lógica do Fórum: Trava de Voto Único por Usuário
+        function votePost(postId, voteType) {
+            const post = chatPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            // Inicialização de contadores se ausentes
+            if (typeof post.votesUp !== 'number') post.votesUp = 0;
+            if (typeof post.votesDown !== 'number') post.votesDown = 0;
+            if (typeof post.reports !== 'number') post.reports = 0;
+
+            const currentVote = userForumVotes[postId]; // Voto anterior do usuário ('up', 'down', 'report' ou undefined)
+
+            if (currentVote === voteType) {
+                // Se clicar novamente na mesma opção, desfaz o voto
+                if (voteType === 'up') post.votesUp = Math.max(0, post.votesUp - 1);
+                if (voteType === 'down') post.votesDown = Math.max(0, post.votesDown - 1);
+                if (voteType === 'report') post.reports = Math.max(0, post.reports - 1);
+                delete userForumVotes[postId];
+            } else {
+                // Remove voto anterior se existia
+                if (currentVote === 'up') post.votesUp = Math.max(0, post.votesUp - 1);
+                if (currentVote === 'down') post.votesDown = Math.max(0, post.votesDown - 1);
+                if (currentVote === 'report') post.reports = Math.max(0, post.reports - 1);
+
+                // Aplica novo voto
+                if (voteType === 'up') post.votesUp++;
+                if (voteType === 'down') post.votesDown++;
+                if (voteType === 'report') {
+                    post.reports++;
+                    alert("Sua denúncia foi registrada. A moderação irá analisar se este comentário atenta contra as diretrizes.");
+                }
+
+                userForumVotes[postId] = voteType;
+            }
+
+            saveDataToStorage();
+            renderChatFeed();
         }
 
         function renderChatFeed() {
             const feed = document.getElementById('chat-feed');
-            feed.innerHTML = chatPosts.map(post => `
-                <div class="card">
+            if (!feed) return;
+
+            feed.innerHTML = chatPosts.map(post => {
+                const userVote = userForumVotes[post.id];
+                const isReportedHeavy = (post.reports || 0) >= 3;
+
+                return `
+                <div class="card" style="${isReportedHeavy ? 'opacity: 0.6; border: 1px dashed var(--danger);' : ''}">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <h4 class="card-title">${post.title}</h4>
                             <span style="font-size: 0.8rem; color: var(--text-muted);">Postado por: ${post.author}</span>
                         </div>
+                        ${isReportedHeavy ? `<span class="badge badge-danger">Sob Análise de Moderação</span>` : ''}
                     </div>
                     <p class="card-desc" style="margin-top: 10px;">${post.desc}</p>
                     <div class="card-footer">
                         <div class="vote-actions">
-                            <button class="btn-vote" onclick="votePost(${post.id})">👍 Útil (${post.votes})</button>
+                            <button class="btn-vote ${userVote === 'up' ? 'active-up' : ''}" onclick="votePost(${post.id}, 'up')" title="Votar como útil">
+                                👍 Útil (${post.votesUp || 0})
+                            </button>
+                            <button class="btn-vote ${userVote === 'down' ? 'active-down' : ''}" onclick="votePost(${post.id}, 'down')" title="Votar como não útil">
+                                👎 Não útil (${post.votesDown || 0})
+                            </button>
+                            <button class="btn-vote ${userVote === 'report' ? 'active-report' : ''}" onclick="votePost(${post.id}, 'report')" title="Denunciar por ferir diretrizes">
+                                ⚠️ Denunciar (${post.reports || 0})
+                            </button>
                         </div>
-                        <span style="font-size: 0.75rem; color: var(--success);">✔ Verificado pela comunidade</span>
+                        <span style="font-size: 0.75rem; color: var(--success);">✔ Validação Comunitária</span>
                     </div>
                 </div>
-            `).join('');
-        }
-
-        function votePost(id) {
-            const post = chatPosts.find(p => p.id === id);
-            if (post) {
-                post.votes++;
-                renderChatFeed();
-            }
+            `}).join('');
         }
 
         function submitPost(e) {
             e.preventDefault();
-            const title = document.getElementById('chat-title').value;
-            const body = document.getElementById('chat-body').value;
+            const titleInput = document.getElementById('chat-title');
+            const bodyInput = document.getElementById('chat-body');
 
-            chatPosts.unshift({
+            const title = titleInput.value.trim();
+            const body = bodyInput.value.trim();
+
+            if (!title || !body) return;
+
+            const newPost = {
                 id: Date.now(),
                 author: "Morador Registrado (Viçosa)",
                 title: title,
                 desc: body,
-                votes: 1
-            });
+                votesUp: 1,
+                votesDown: 0,
+                reports: 0
+            };
 
+            chatPosts.unshift(newPost);
+            userForumVotes[newPost.id] = 'up'; // Voto do autor por padrão
+            
+            saveDataToStorage();
             renderChatFeed();
-            document.getElementById('chat-title').value = '';
-            document.getElementById('chat-body').value = '';
+
+            titleInput.value = '';
+            bodyInput.value = '';
+        }
+
+        function updateStats() {
+            const totalReports = vicosaRisks.reduce((acc, r) => acc + (r.reinforcements || 1), 0);
+            const bairrosUnicos = new Set(vicosaRisks.map(r => r.bairro.trim().toLowerCase())).size;
+
+            const elTotal = document.getElementById('stat-total');
+            const elBairros = document.getElementById('stat-bairros');
+
+            if (elTotal) elTotal.innerText = totalReports;
+            if (elBairros) elBairros.innerText = bairrosUnicos;
         }
 
         function toggleFaq(element) {
@@ -1010,7 +1253,7 @@
         function speakPageText() {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const textToRead = "Você está na plataforma Você viu o problema? Cadê a solução? Concurso Inova Viçosa 2026. Projeto focado na identificação e prevenção de riscos urbanos em Viçosa Minas Gerais.";
+                const textToRead = "Você está na plataforma Você viu o problema? Cadê a solução? Concurso Inova Viçosa 2026. Plataforma de cidadania participativa para mapeamento de riscos e soluções urbanas em Viçosa, Minas Gerais.";
                 const utterance = new SpeechSynthesisUtterance(textToRead);
                 utterance.lang = 'pt-BR';
                 window.speechSynthesis.speak(utterance);
